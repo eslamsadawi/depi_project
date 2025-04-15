@@ -7,3 +7,28 @@ services:
     ports:
       - "8080:80"
     restart: always
+    networks:
+      - monitoring
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    volumes:
+      - ./monitoring/prometheus-config.yaml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    networks:
+      - monitoring
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./monitoring/grafana-config.yaml:/etc/grafana/provisioning/datasources/datasource.yaml
+    networks:
+      - monitoring
+
+networks:
+  monitoring:
