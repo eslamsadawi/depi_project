@@ -315,4 +315,82 @@
       debug:
         msg: "Your application should be accessible at http://{{ public_ip.stdout }}:{{ host_port }}"
       when: public_ip is defined
+      
+    # Monitoring Stack Deployment
+    - name: Deploy monitoring - node-exporter
+      command: kubectl apply -f node-exporter-deployment.yaml
+      args:
+        chdir: ../K8S/monitoring
+      register: node_exporter_result
+      ignore_errors: yes
+      when: cluster_info.rc == 0
+      
+    - name: Deploy monitoring - prometheus config
+      command: kubectl apply -f prometheus-config.yaml
+      args:
+        chdir: ../K8S/monitoring
+      register: prom_config_result
+      ignore_errors: yes
+      when: cluster_info.rc == 0
+      
+    - name: Deploy monitoring - prometheus deployment
+      command: kubectl apply -f prometheus-deployment.yaml
+      args:
+        chdir: ../K8S/monitoring
+      register: prometheus_result
+      ignore_errors: yes
+      when: cluster_info.rc == 0 and prom_config_result.rc == 0
+      
+    - name: Deploy monitoring - grafana config
+      command: kubectl apply -f grafana-config.yaml
+      args:
+        chdir: ../K8S/monitoring
+      register: grafana_config_result
+      ignore_errors: yes
+      when: cluster_info.rc == 0
+      
+    - name: Deploy monitoring - grafana deployment
+      command: kubectl apply -f grafana-deployment.yaml
+      args:
+        chdir: ../K8S/monitoring
+      register: grafana_result
+      ignore_errors: yes
+      when: cluster_info.rc == 0 and grafana_config_result.rc == 0
+      
+    - name: Wait for monitoring pods to be ready (30 seconds)
+      shell: |
+        start_time=$(date +%s)
+        while [ $(($(date +%s) - start_time)) -lt 30 ]; do
+          prom_status=$(kubectl get pods -l app=prometheus -o jsonpath='{.items[*].status.phase}')
+          grafana_status=$(kubectl get pods -l app=grafana -o jsonpath='{.items[*].status.phase}')
+          if [[ "$prom_status" == *"Running"* && "$grafana_status" == *"Running"* ]]; then
+            echo "Monitoring pods are running"
+            exit 0
+          fi
+          echo "Waiting for monitoring pods..."
+          sleep 5
+        done
+        echo "Continuing deployment process"
+        exit 0
+      register: monitoring_wait
+      ignore_errors: yes
+      when: cluster_info.rc == 0 and prometheus_result.rc == 0 and grafana_result.rc == 0
+      
+    - name: Get NodePort of the monitoring services
+      shell: |
+        echo "Prometheus port: $(kubectl get service prometheus-service -o jsonpath='{.spec.ports[0].nodePort}')"
+        echo "Grafana port: $(kubectl get service grafana-service -o jsonpath='{.spec.ports[0].nodePort}')"
+      register: monitoring_ports
+      when: cluster_info.rc == 0 and prometheus_result.rc == 0 and grafana_result.rc == 0
+      ignore_errors: yes
+      
+    - name: Display monitoring access information
+      debug:
+        msg: |
+          Monitoring stack deployed:
+          - Prometheus UI: http://{{ minikube_ip.stdout }}:{{ monitoring_ports.stdout_lines[0] | regex_search('\\d+$') }}
+          - Grafana dashboard: http://{{ minikube_ip.stdout }}:{{ monitoring_ports.stdout_lines[1] | regex_search('\\d+$') }} (default login: admin/admin)
+          
+          NOTE: To access dashboards, you may need to set up port forwarding similar to the application service.
+      when: minikube_ip is defined and monitoring_ports is defined and minikube_ip.rc == 0
 

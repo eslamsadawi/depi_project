@@ -12,7 +12,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 // Clone the Git repository
-                git url: 'https://github.com/eslamsadawi/mydepiproject.git', branch: 'master'
+                git url: 'https://github.com/eslamsadawi/depi_project.git', branch: 'main'
             }
         }
 
@@ -27,20 +27,20 @@ pipeline {
                     cp -r about.html contact.html design.png Dockerfile index.html shop-single.html shop.html README.md Ansible K8S assets deploy_package/
                     
                     # Create the tar file from the clean directory
-                    cd deploy_package && tar -czf ../mydepiproject.tar.gz .
+                    cd deploy_package && tar -czf ../depiproject.tar.gz .
                 '''
                 
                 // Transfer the tar file to the Ansible server
                 sshagent(credentials: ['ansible-ssh-credentials']) {
                     sh """
                         ssh -o StrictHostKeyChecking=no ubuntu@\${ANSIBLE_SERVER} "mkdir -p ${REMOTE_PROJECT_DIR}"
-                        scp -o StrictHostKeyChecking=no mydepiproject.tar.gz ubuntu@\${ANSIBLE_SERVER}:${REMOTE_PROJECT_DIR}/
-                        ssh -o StrictHostKeyChecking=no ubuntu@\${ANSIBLE_SERVER} "cd ${REMOTE_PROJECT_DIR} && tar -xzf mydepiproject.tar.gz && rm mydepiproject.tar.gz"
+                        scp -o StrictHostKeyChecking=no depiproject.tar.gz ubuntu@\${ANSIBLE_SERVER}:${REMOTE_PROJECT_DIR}/
+                        ssh -o StrictHostKeyChecking=no ubuntu@\${ANSIBLE_SERVER} "cd ${REMOTE_PROJECT_DIR} && tar -xzf depiproject.tar.gz && rm depiproject.tar.gz"
                     """
                 }
                 
                 // Clean up the local deployment package
-                sh 'rm -rf deploy_package mydepiproject.tar.gz'
+                sh 'rm -rf deploy_package depiproject.tar.gz'
             }
         }
 

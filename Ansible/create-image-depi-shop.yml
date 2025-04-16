@@ -11,7 +11,7 @@
 
   - name: clone repository
     git:
-      repo: https://github.com/eslamsadawi/mydepiproject.git
+      repo: https://github.com/eslamsadawi/depi_project.git
       dest: "{{ ansible_env.HOME }}/docker/depi-shop"
       clone: yes
       update: yes

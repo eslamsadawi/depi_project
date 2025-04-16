@@ -3,7 +3,6 @@ kind: Deployment
 metadata:
   name: grafana
 spec:
-  type: NodePort
   replicas: 1
   selector:
     matchLabels:
@@ -35,6 +34,7 @@ kind: Service
 metadata:
   name: grafana-service
 spec:
+  type: NodePort
   selector:
     app: grafana
   ports:
