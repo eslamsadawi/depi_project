@@ -1,0 +1,61 @@
+{
+  "id": null,
+  "title": "Node Exporter Monitoring",
+  "timezone": "browser",
+  "schemaVersion": 16,
+  "version": 1,
+  "refresh": "10s",
+  "panels": [
+    {
+      "type": "graph",
+      "title": "Node CPU Usage (%)",
+      "targets": [
+        {
+          "expr": "100 - (avg by(instance) (rate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)",
+          "legendFormat": "{{instance}}",
+          "refId": "A"
+        }
+      ],
+      "datasource": "Prometheus",
+      "xaxis": { "mode": "time" },
+      "yaxes": [
+        { "format": "percent", "min": 0, "max": 100 },
+        { "format": "short" }
+      ]
+    },
+    {
+      "type": "graph",
+      "title": "Node Memory Usage (MB)",
+      "targets": [
+        {
+          "expr": "(node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / 1024 / 1024",
+          "legendFormat": "{{instance}}",
+          "refId": "B"
+        }
+      ],
+      "datasource": "Prometheus",
+      "xaxis": { "mode": "time" },
+      "yaxes": [
+        { "format": "mbytes" },
+        { "format": "short" }
+      ]
+    },
+    {
+      "type": "graph",
+      "title": "Node Disk Usage (%)",
+      "targets": [
+        {
+          "expr": "(node_filesystem_size_bytes{mountpoint=\"/\"} - node_filesystem_free_bytes{mountpoint=\"/\"}) / node_filesystem_size_bytes{mountpoint=\"/\"} * 100",
+          "legendFormat": "{{instance}}",
+          "refId": "C"
+        }
+      ],
+      "datasource": "Prometheus",
+      "xaxis": { "mode": "time" },
+      "yaxes": [
+        { "format": "percent", "min": 0, "max": 100 },
+        { "format": "short" }
+      ]
+    }
+  ]
+}
