@@ -21,8 +21,4 @@
     command: docker build -t depi-shop:latest "{{ ansible_env.HOME }}/docker/depi-shop"
     args:
       chdir: "{{ ansible_env.HOME }}/docker/depi-shop"
-  # - name: log in to Docker Hub
-  #   command: docker login -u omarabdelwahab1 -p omarahmed.81204 # Temporarily removing no_log to see errors
 
-  # - name: push Docker image to Docker Hub
-  #   command: docker push omarabdelwahab1/cafe-app:latest
