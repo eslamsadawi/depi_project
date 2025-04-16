@@ -12,11 +12,14 @@ spec:
       labels:
         app: prometheus
     spec:
+      serviceAccountName: prometheus
       containers:
       - name: prometheus
         image: prom/prometheus
         args:
           - "--config.file=/etc/prometheus/prometheus.yml"
+          - "--storage.tsdb.retention.time=15d"
+          - "--web.enable-lifecycle"
         ports:
         - containerPort: 9090
         volumeMounts:
