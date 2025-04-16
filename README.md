@@ -22,10 +22,9 @@ This presentation outlines the development and implementation of a Continuous In
 │   ├── inventory         # Ansible inventory file
 │   └── k8s-deploy.yml    # Deploys app to Kubernetes
 ├── K8S/                  # Kubernetes manifests
-│   ├── cafe-app-deployment.yml    # Pod deployment config
-│   └── cafe-app-svc.yml  # Service configuration
+│   ├── depi-shop-deployment.yml    # Pod deployment config
+│   └── dpei-shop-svc.yml  # Service configuration
 ├── assets/               # Web app static assets
-├── Dockerfile            # Docker image definition
 ├── Jenkinsfile           # Jenkins pipeline definition
 ├── docker-compose.yml    # Local Docker deployment config
 └── [HTML files]          # Web application source
@@ -70,7 +69,7 @@ This presentation outlines the development and implementation of a Continuous In
 
 1. Ensure Minikube is running:
    ```bash
-   minikube start
+      minikube start
    ```
 
 2. Access the application:
@@ -105,14 +104,17 @@ This presentation outlines the development and implementation of a Continuous In
 ## Future Enhancements
 
 1. **Auto-scaling Configuration**: Implement Kubernetes Horizontal Pod Autoscaler
-2. **Monitoring Integration**: Add Prometheus and Grafana for metrics
-3. **Blue/Green Deployment**: Implement zero-downtime deployment strategy
-4. **SSL/TLS Configuration**: Secure the application with HTTPS
-5. **Multi-environment Support**: Add staging and production environments
+2. **Blue/Green Deployment**: Implement zero-downtime deployment strategy
+3. **SSL/TLS Configuration**: Secure the application with HTTPS
+4. **Multi-environment Support**: Add staging and production environments
 
 ## Contributors
 
-- Eslam Sadawi
+- Eslam Mahmoud Sadawi
+- Mohamed Mahmoud Sabek
+- Ahmed Magdy Amin
+- Samira Ashraf Mohamed
+- Fares Mohamed Ali
 
 ## License
 
