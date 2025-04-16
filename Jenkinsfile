@@ -24,7 +24,7 @@ pipeline {
                     mkdir -p deploy_package
                     
                     # Copy all necessary files/directories (excluding Jenkins-specific files)
-                    cp -r about.html contact.html design.png Dockerfile index.html shop-single.html shop.html README.md Ansible K8S assets deploy_package/
+                    cp -r about.html contact.html design.png index.html shop-single.html shop.html README.md Ansible K8S assets deploy_package/
                     
                     # Create the tar file from the clean directory
                     cd deploy_package && tar -czf ../depiproject.tar.gz .
