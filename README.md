@@ -95,6 +95,7 @@ This presentation outlines the development and implementation of a Continuous In
 
 ## Design
 
+![design](https://github.com/user-attachments/assets/61fc7120-f6c0-41b8-94bd-fd2bef9b52a3)
 
 
 ## Demo
