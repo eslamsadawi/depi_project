@@ -393,4 +393,74 @@
           
           NOTE: To access dashboards, you may need to set up port forwarding similar to the application service.
       when: minikube_ip is defined and monitoring_ports is defined and minikube_ip.rc == 0
+      
+    # Extract Grafana NodePort for port forwarding
+    - name: Extract Grafana NodePort
+      set_fact:
+        grafana_port: "{{ monitoring_ports.stdout_lines[1] | regex_search('\\d+$') }}"
+      when: monitoring_ports is defined and monitoring_ports.stdout_lines|length > 1
+      
+    - name: Set default grafana host port
+      set_fact:
+        grafana_host_port: 3000
+      
+    # Setup Port Forwarding for Grafana
+    - name: Create systemd service file for Grafana port forwarding
+      copy:
+        dest: /etc/systemd/system/grafana-port-forward.service
+        content: |
+          [Unit]
+          Description=Grafana Port Forward Service
+          After=network.target
+          
+          [Service]
+          ExecStart=/usr/bin/socat TCP-LISTEN:{{ grafana_host_port }},fork,reuseaddr TCP:{{ minikube_ip.stdout }}:{{ grafana_port }}
+          Restart=always
+          
+          [Install]
+          WantedBy=multi-user.target
+      become: yes
+      when: minikube_ip is defined and grafana_port is defined and minikube_ip.rc == 0
+      register: grafana_systemd_service
+      ignore_errors: yes
+      
+    - name: Reload systemd for Grafana service
+      systemd:
+        daemon_reload: yes
+      become: yes
+      when: grafana_systemd_service is changed
+      ignore_errors: yes
+      
+    - name: Enable and start Grafana port forward service
+      systemd:
+        name: grafana-port-forward
+        state: restarted
+        enabled: yes
+      become: yes
+      when: minikube_ip is defined and grafana_port is defined and minikube_ip.rc == 0
+      ignore_errors: yes
+      
+    - name: Verify if Grafana port forwarding is working
+      wait_for:
+        host: localhost
+        port: "{{ grafana_host_port }}"
+        timeout: 10
+      ignore_errors: yes
+      register: grafana_port_check
+      
+    - name: Show Grafana port forwarding status
+      debug:
+        msg: "Grafana port forwarding is {{ 'active' if grafana_port_check.failed == false else 'not working' }}"
+        
+    - name: Alternative approach - use kubectl port-forward for Grafana in background
+      shell: |
+        nohup kubectl port-forward --address 0.0.0.0 service/grafana-service {{ grafana_host_port }}:3000 > /tmp/grafana-port-forward.log 2>&1 &
+        echo $! > /tmp/grafana-port-forward.pid
+      when: grafana_port_check.failed | default(true)
+      ignore_errors: yes
+      
+    - name: Display Grafana access information
+      debug:
+        msg: "Your Grafana dashboard should be accessible at http://{{ public_ip.stdout }}:{{ grafana_host_port }} (default login: admin/admin)"
+      when: public_ip is defined
 
