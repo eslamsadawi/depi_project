@@ -329,6 +329,14 @@
       ignore_errors: yes
       when: cluster_info.rc == 0
       
+    - name: Deploy monitoring - cadvisor
+      command: kubectl apply -f cadvisor-deployment.yaml
+      args:
+        chdir: ../K8S/monitoring
+      register: cadvisor_result
+      ignore_errors: yes
+      when: cluster_info.rc == 0
+      
     - name: Deploy monitoring - prometheus config
       command: kubectl apply -f prometheus-config.yaml
       args:
