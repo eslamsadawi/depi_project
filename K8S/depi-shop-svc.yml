@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: zayshop-service
+  name: depi-shop-service
   labels:
-    app: zayshop
+    app: depi-shop
 spec:
   selector:
-    app: zayshop
+    app: depi-shop
   ports:
     - port: 80      
       targetPort: 80  
-  type: LoadBalancer 
+  type: LoadBalancer

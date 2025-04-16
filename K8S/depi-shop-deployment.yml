@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: zayshop-deployment
+  name: mylab1-depi-shop
   labels:
-    app: zayshop
+    app: depi-shop
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: zayshop
+      app: depi-shop
   template:
     metadata:
       labels:
-        app: zayshop
+        app: depi-shop
     spec:
       containers:
-      - name: zayshop
+      - name: depi-shop
         image: depi-shop:latest
         imagePullPolicy: Never
         ports:

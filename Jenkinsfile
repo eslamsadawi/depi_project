@@ -50,7 +50,7 @@ pipeline {
                 sshagent(credentials: ['ansible-ssh-credentials']) {
                     sh """
                         ssh -o StrictHostKeyChecking=no ubuntu@\${ANSIBLE_SERVER} \\
-                        "cd ${REMOTE_PROJECT_DIR} && ansible-playbook -i Ansible/inventory Ansible/create-image-cafe-app.yml"
+                        "cd ${REMOTE_PROJECT_DIR} && ansible-playbook -i Ansible/inventory Ansible/create-image-depi-shop.yml"
                     """
                 }
             }
