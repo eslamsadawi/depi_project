@@ -43,7 +43,6 @@ pipeline {
                 sh 'rm -rf deploy_package depiproject.tar.gz'
             }
         }
-        // adding triger comment 
 
         stage('Build Docker Image') {
             steps {
@@ -85,7 +84,7 @@ pipeline {
                 }
             }
         }
-
+        // comment to trigger the pipeline
         stage('Deploy to Kubernetes') {
             steps {
                 // Running an Ansible playbook to deploy the app
