@@ -43,6 +43,7 @@ pipeline {
                 sh 'rm -rf deploy_package depiproject.tar.gz'
             }
         }
+        // adding triger comment 
 
         stage('Build Docker Image') {
             steps {
